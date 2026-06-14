@@ -21,6 +21,20 @@ use tauri_plugin_notification::NotificationExt;
 use crate::settings::{AppSettings, SettingsStore};
 use crate::layout::{detect_direction, en_to_ua, ua_to_en, Direction};
 
+/// Відпустити «залиплі» модифікатори, які користувач ще тримає
+/// в момент спрацювання глобального хоткея. Без цього наш Ctrl+C
+/// перетворюється на Ctrl+Shift+C / Ctrl+Alt+C і ціль (Chrome, Word)
+/// інтерпретує його як зовсім іншу команду (DevTools, копіювати
+/// форматування тощо), і виділений текст не потрапляє в буфер.
+fn release_modifiers() {
+    if let Ok(mut enigo) = Enigo::new(&EnigoSettings::default()) {
+        let _ = enigo.key(Key::Shift, EnigoDir::Release);
+        let _ = enigo.key(Key::Control, EnigoDir::Release);
+        let _ = enigo.key(Key::Alt, EnigoDir::Release);
+        let _ = enigo.key(Key::Meta, EnigoDir::Release);
+    }
+}
+
 /// Основна процедура конвертації: керована хоткеєм або з UI вручну.
 fn run_conversion(app: &AppHandle, settings: &AppSettings) {
     // 1) Зберегти поточний clipboard
@@ -30,13 +44,19 @@ fn run_conversion(app: &AppHandle, settings: &AppSettings) {
     };
     let saved = clipboard.get_text().ok();
 
+    // Дочекатися, поки користувач відпустить хоткей, і примусово
+    // «знімемо» модифікатори перед синтетичним Ctrl+C.
+    thread::sleep(Duration::from_millis(120));
+    release_modifiers();
+    thread::sleep(Duration::from_millis(30));
+
     // 2) Емулювати Ctrl+C на активному вікні
     if let Ok(mut enigo) = Enigo::new(&EnigoSettings::default()) {
         let _ = enigo.key(Key::Control, EnigoDir::Press);
         let _ = enigo.key(Key::Unicode('c'), EnigoDir::Click);
         let _ = enigo.key(Key::Control, EnigoDir::Release);
     }
-    thread::sleep(Duration::from_millis(80));
+    thread::sleep(Duration::from_millis(120));
 
     // 3) Прочитати виділений текст
     let selected = match clipboard.get_text() {
@@ -74,6 +94,11 @@ fn run_conversion(app: &AppHandle, settings: &AppSettings) {
         return;
     }
     thread::sleep(Duration::from_millis(30));
+
+    // На випадок, якщо за час роботи користувач знову встиг натиснути
+    // модифікатори — ще раз їх «відпускаємо» перед Ctrl+V.
+    release_modifiers();
+    thread::sleep(Duration::from_millis(20));
 
     if let Ok(mut enigo) = Enigo::new(&EnigoSettings::default()) {
         let _ = enigo.key(Key::Control, EnigoDir::Press);
