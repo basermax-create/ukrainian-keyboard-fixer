@@ -25,12 +25,6 @@
     ],
     "security": {
       "csp": null
-    },
-    "trayIcon": {
-      "id": "main",
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": false,
-      "tooltip": "Raskladka Fix"
     }
   },
   "bundle": {
@@ -46,6 +40,14 @@
     "windows": {
       "wix": {
         "language": "uk-UA"
+      },
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "installMode": "currentUser",
+        "languages": ["Ukrainian", "English"],
+        "displayLanguageSelector": true,
+        "allowElevation": true,
+        "compression": "lzma"
       }
     }
   },

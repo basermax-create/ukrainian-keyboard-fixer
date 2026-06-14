@@ -11,7 +11,11 @@ pub struct AppSettings {
     pub direction: String,      // "auto" | "en_to_ua" | "ua_to_en"
     pub autostart: bool,
     pub notifications: bool,
+    #[serde(default = "default_true")]
+    pub first_run: bool,
 }
+
+fn default_true() -> bool { true }
 
 impl Default for AppSettings {
     fn default() -> Self {
@@ -20,6 +24,7 @@ impl Default for AppSettings {
             direction: "auto".into(),
             autostart: false,
             notifications: true,
+            first_run: true,
         }
     }
 }

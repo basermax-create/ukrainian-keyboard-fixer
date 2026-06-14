@@ -257,8 +257,15 @@ pub fn run() {
             register_hotkey(&handle, &initial.hotkey);
 
             // Сховати вікно налаштувань при старті — програма живе в треї
+            // Якщо це перший запуск — показати wizard (вікно налаштувань),
+            // інакше — сховати, програма живе в треї.
             if let Some(w) = app.get_webview_window("settings") {
-                let _ = w.hide();
+                if initial.first_run {
+                    let _ = w.show();
+                    let _ = w.set_focus();
+                } else {
+                    let _ = w.hide();
+                }
             }
 
             Ok(())
