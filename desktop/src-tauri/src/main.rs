@@ -8,7 +8,6 @@ use std::thread;
 use std::time::Duration;
 
 use enigo::{Direction as EnigoDir, Enigo, Key, Keyboard, Settings as EnigoSettings};
-use serde::{Deserialize, Serialize};
 use tauri::{
     image::Image,
     menu::{Menu, MenuItem},
