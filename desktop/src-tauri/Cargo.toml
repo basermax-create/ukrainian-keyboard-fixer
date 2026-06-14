@@ -5,10 +5,6 @@ description = "Конвертація розкладки QWERTY ↔ ЙЦУКЕН
 authors = ["you"]
 edition = "2021"
 
-[lib]
-name = "raskladka_fix_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
-
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
