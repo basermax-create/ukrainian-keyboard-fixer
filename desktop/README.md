@@ -71,3 +71,30 @@ Tray menu → **Налаштування** відкриває вікно з оп
 - Поля паролів і деякі термінали блокують програмний `Ctrl+C` — програма покаже toast і скопіює конвертований текст у clipboard.
 - Google Docs / Notion використовують власний clipboard layer — можливі затримки.
 - Без підпису коду Windows SmartScreen показує попередження «Unknown publisher» при першому запуску — це нормально для dev-збірки.
+
+## Авто-збірка через GitHub Actions
+
+Workflow `.github/workflows/release.yml` збирає Windows-інсталятор у хмарі — локальна Windows-машина не потрібна.
+
+### Як випустити нову версію
+1. Під'єднайте проєкт до GitHub (меню `+` → GitHub → Connect project) і дочекайтесь першого пушу.
+2. Згенеруйте `package-lock.json` (потрібен один раз для кешу npm):
+   ```bash
+   cd desktop && npm install
+   git add desktop/package-lock.json && git commit -m "chore: lockfile"
+   ```
+3. Підніміть версію в `desktop/package.json` і `desktop/src-tauri/tauri.conf.json` (наприклад `0.1.0` → `0.1.1`).
+4. Створіть і запуште тег:
+   ```bash
+   git tag v0.1.1
+   git push origin v0.1.1
+   ```
+5. У вкладці **Actions** на GitHub побачите job `build-windows` (триває ~8–15 хв перший раз, далі з кешем 4–6 хв).
+6. Коли завершиться — у вкладці **Releases** з'явиться draft-реліз з `.msi` та `.exe`. Перегляньте і натисніть **Publish release**.
+
+### Ручний запуск без тегу
+Actions → `Release Windows Build` → `Run workflow`. Артефакти будуть у вкладці Summary запуску (не в Releases).
+
+### Що далі (опційно)
+- **Підпис коду:** додайте секрети `TAURI_SIGNING_PRIVATE_KEY` + сертифікат CA → SmartScreen перестане лякати.
+- **Auto-updater:** Tauri вміє перевіряти оновлення з GitHub Releases — налаштовується в `tauri.conf.json` `plugins.updater`.
