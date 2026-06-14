@@ -38,9 +38,6 @@
       "icons/icon.png"
     ],
     "windows": {
-      "wix": {
-        "language": "uk-UA"
-      },
       "nsis": {
         "installMode": "currentUser",
         "languages": ["Ukrainian", "English"],
