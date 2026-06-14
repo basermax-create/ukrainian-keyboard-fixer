@@ -19,13 +19,18 @@ serde_json = "1"
 enigo = "0.2"
 arboard = "3"
 
-# Force alloc-no-stdlib to v2 across the whole graph.
-# brotli 8.0.3 hard-requires `^2.0`, but brotli-decompressor 5.0.2 accepts
-# `>=2.0.4, <4`. Without a direct constraint Cargo picks v3 for the
-# decompressor and v2 for brotli, producing two distinct `Allocator` traits
-# and `StandardAlloc` types — hence E0277 mismatches in brotli's
-# combined_alloc.rs. Pinning to ^2 unifies the graph.
-alloc-no-stdlib = "2"
+# --- Brotli dependency graph lock ---
+# brotli 8.0.3 hard-requires alloc-no-stdlib ^2.0, but brotli-decompressor 5.0.2
+# widened its range to `>=2.0.4, <4`. Cargo's resolver then picks v3 for the
+# decompressor and v2 for brotli, producing two incompatible `Allocator`
+# traits and `StandardAlloc` types — visible as repeated E0277 errors in
+# brotli's combined_alloc.rs.
+#
+# We force the entire brotli stack onto a single, consistent set of versions
+# that all use alloc-no-stdlib v2. These three exact pins must stay in sync.
+brotli = "=8.0.3"
+brotli-decompressor = "=5.0.1"
+alloc-no-stdlib = "=2.0.4"
 
 [profile.release]
 panic = "abort"

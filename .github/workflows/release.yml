@@ -37,6 +37,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: desktop/src-tauri -> target
+          # Bump this prefix to invalidate the cache after dependency changes
+          # (e.g. brotli / alloc-no-stdlib pinning).
+          prefix-key: v2-brotli-fix
+          cache-on-failure: false
 
       - name: Install npm dependencies
         run: npm ci
