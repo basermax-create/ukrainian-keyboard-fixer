@@ -8,7 +8,6 @@ use std::thread;
 use std::time::Duration;
 
 use enigo::{Direction as EnigoDir, Enigo, Key, Keyboard, Settings as EnigoSettings};
-use serde::{Deserialize, Serialize};
 use tauri::{
     image::Image,
     menu::{Menu, MenuItem},
@@ -19,14 +18,8 @@ use tauri_plugin_autostart::{MacosLauncher, ManagerExt as AutostartExt};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 use tauri_plugin_notification::NotificationExt;
 
-use crate::layout::{detect_direction, en_to_ua, ua_to_en, Direction};
 use crate::settings::{AppSettings, SettingsStore};
-
-#[derive(Default, Clone, Serialize, Deserialize)]
-struct ConvertResult {
-    ok: bool,
-    converted: String,
-}
+use crate::layout::{detect_direction, en_to_ua, ua_to_en, Direction};
 
 /// Основна процедура конвертації: керована хоткеєм або з UI вручну.
 fn run_conversion(app: &AppHandle, settings: &AppSettings) {
