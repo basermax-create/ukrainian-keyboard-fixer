@@ -42,12 +42,9 @@
         "language": "uk-UA"
       },
       "nsis": {
-        "installerIcon": "icons/icon.ico",
         "installMode": "currentUser",
         "languages": ["Ukrainian", "English"],
-        "displayLanguageSelector": true,
-        "allowElevation": true,
-        "compression": "lzma"
+        "displayLanguageSelector": true
       }
     }
   },
