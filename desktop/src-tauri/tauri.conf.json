@@ -46,10 +46,6 @@
     "windows": {
       "wix": {
         "language": "uk-UA"
-      },
-      "nsis": {
-        "installerIcon": "icons/icon.ico",
-        "installMode": "perUser"
       }
     }
   },
