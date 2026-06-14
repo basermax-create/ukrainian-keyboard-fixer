@@ -19,11 +19,13 @@ serde_json = "1"
 enigo = "0.2"
 arboard = "3"
 
-# Force alloc-no-stdlib to v3 across the whole graph.
-# brotli 8.x uses the v3 `Allocator` trait, but without a direct constraint
-# Cargo can pick v2 for some dependents, mixing trait definitions and
-# producing E0277 "StandardAlloc does not implement Allocator<T>" errors.
-alloc-no-stdlib = "3"
+# Force alloc-no-stdlib to v2 across the whole graph.
+# brotli 8.0.3 hard-requires `^2.0`, but brotli-decompressor 5.0.2 accepts
+# `>=2.0.4, <4`. Without a direct constraint Cargo picks v3 for the
+# decompressor and v2 for brotli, producing two distinct `Allocator` traits
+# and `StandardAlloc` types — hence E0277 mismatches in brotli's
+# combined_alloc.rs. Pinning to ^2 unifies the graph.
+alloc-no-stdlib = "2"
 
 [profile.release]
 panic = "abort"
