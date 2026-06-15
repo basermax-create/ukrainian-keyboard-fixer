@@ -28,7 +28,12 @@ fn build_map(reverse: bool) -> HashMap<char, String> {
         let from_upper: String = from.to_uppercase().collect();
         let to_upper: String = to.to_uppercase().collect();
         if from_upper.chars().count() == 1 {
-            map.insert(from_upper.chars().next().unwrap(), to_upper);
+            let upper_char = from_upper.chars().next().unwrap();
+            // Не перезаписуємо існуючий мапінг нижнього регістру для символів,
+            // у яких to_uppercase() повертає той самий символ (напр. ',', '.', ';', '[').
+            if upper_char != from {
+                map.insert(upper_char, to_upper);
+            }
         }
     }
     map
